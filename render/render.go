@@ -30,23 +30,12 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	}
 
 	for ndx, page := range pages {
+		base_path := "./templates/base.layouts.tmpl"
 		name := filepath.Base(page)
 		log.Printf("%d: %s", ndx, name)
-		tmpl, err := template.New(name).Funcs(functions).ParseFiles(page)
+		tmpl, err := template.New(name).Funcs(functions).ParseFiles(base_path, page)
 		if err != nil {
 			return tCache, err
-		}
-		var layouts []string
-		layouts, err = filepath.Glob("./templates/*.layouts.tmpl")
-		if err != nil {
-			return tCache, err
-		}
-
-		if len(layouts) > 0 {
-			tmpl, err = tmpl.ParseGlob("./templates/*.layouts.tmpl")
-			if err != nil {
-				return tCache, err
-			}
 		}
 		tCache[name] = tmpl
 	}
