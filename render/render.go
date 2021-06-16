@@ -23,17 +23,21 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	tCache := map[string]*template.Template{}
 
 	log.Print("starting create templates")
+	layouts, err := template.New("base").Funcs(functions).ParseGlob("./templates/*.layouts.tmpl")
+	if err != nil {
+		return tCache, err
+	}
+
 	pages, err := filepath.Glob("./templates/*.pages.tmpl")
 	if err != nil {
-		// log.Fatalf("loading page templates failed: %s", err)
 		return tCache, err
 	}
 
 	for ndx, page := range pages {
-		base_path := "./templates/base.layouts.tmpl"
+		tmpl, _ := layouts.Clone()
 		name := filepath.Base(page)
 		log.Printf("%d: %s", ndx, name)
-		tmpl, err := template.New(name).Funcs(functions).ParseFiles(base_path, page)
+		tmpl, err := tmpl.New(name).ParseFiles(page)
 		if err != nil {
 			return tCache, err
 		}
