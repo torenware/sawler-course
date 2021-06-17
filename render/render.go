@@ -60,7 +60,10 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 	}
 
 	buf := new(bytes.Buffer)
-	err := ts.Execute(buf, nil)
+	data := map[string]interface{}{
+		"Title": "Hello World!",
+	}
+	err := ts.Execute(buf, data)
 	if err != nil {
 		log.Fatalf("error rendering template: %s", err)
 	}
